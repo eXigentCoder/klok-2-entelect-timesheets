@@ -3,15 +3,14 @@ var _ = require('lodash');
 var excel = require('xlsx');
 var moment = require('moment');
 var util = require('util');
-
+var nconf = require('nconf');
 module.exports = function getTimeSheetEntries() {
-    var workbook = excel.readFile('input.xlsx');
+    var workbook = excel.readFile(nconf.get('inputFile'));
     var sheetNames = Object.keys(workbook.Sheets);
     var firstSheet = workbook.Sheets[sheetNames[0]];
     var cellIds = Object.keys(firstSheet);
     var ignoredCells = ['!ref', '!merges'];
-
-    var defaultComment = 'Software Development';
+    var defaultComment = nconf.get('defaultComment');
     cellIds = cellIds.filter(function (id) {
         return ignoredCells.indexOf(id) < 0;
     });
@@ -99,27 +98,20 @@ module.exports = function getTimeSheetEntries() {
         if (projectParts.length > 2) {
             throw new Error(util.format('Project name "%s" contained %s parts after splitting by ">", expected 2.', cell.project, projectParts.length))
         }
-        var timeParts = cell.text.split(':');
-        var hours = Number(timeParts[0]);
-        var minutes = Number(timeParts[1]);
-        minutes = ((minutes + 7.5) / 15 | 0) * 15 % 60;
-        hours = ((((minutes / 105) + 0.5) | 0) + hours) % 24;
+        var rounded = getRounded(cell.text);
         var date = cell.header.split(' ')[1];
-        var comment = comments.filter(function (comment) {
-            if (comment.date !== date) {
+        var comment = comments.filter(function (commentObject) {
+            if (commentObject.date !== date) {
                 return false;
             }
-            if (comment.project !== cell.project) {
-                return false;
-            }
-            return true;
+            return commentObject.project === cell.project;
         });
         var entry = {
             Date: date,
             Project: projectParts[0],
             Category: projectParts[1],
-            Hours: hours,
-            Minutes: minutes,
+            Hours: rounded.hours,
+            Minutes: rounded.minutes,
             Billable: 'No', //Klok marks certain projects as billable, rather than work blocks, so maybe @billable from comment?
             Description: defaultComment,
             TicketNumber: '', // maybe do something with the comment using a # maybe
@@ -131,3 +123,19 @@ module.exports = function getTimeSheetEntries() {
         timesheetEntries.push(entry);
     }
 };
+
+function getRounded(hhmmString) {
+    let timeParts = hhmmString.text.split(':');
+    if (timeParts.length !== 2) {
+        throw new Error("hhmmString must be in the format x:xx where the x's are numbers");
+    }
+    let hours = Number(timeParts[0]);
+    let minutes = Number(timeParts[0]);
+    minutes = ((minutes + 7.5) / 15 | 0) * 15 % 60;
+    hours = ((((minutes / 105) + 0.5) | 0) + hours) % 24;
+    return {
+        hours: hours,
+        minutes: minutes
+    };
+}
+module.exports.getRounded = getRounded;

@@ -142,7 +142,7 @@ module.exports = {
         "no-new-require": ["warn"],// disallow new operators with calls to require
         "no-path-concat": ["error"],// disallow string concatenation with __dirname and __filename
         "no-process-env": ["warn"],// disallow the use of process.env
-        "no-process-exit": ["error"],// disallow the use of process.exit()
+        "no-process-exit": ["off"],// disallow the use of process.exit()
         "no-restricted-modules": ["off"],// disallow specified modules when loaded by require
         "no-sync": ["error"],// disallow synchronous methods
 
