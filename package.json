@@ -1,0 +1,34 @@
+{
+  "name": "klok-2-entelect-timesheets",
+  "version": "0.0.1",
+  "description": "Transforms Klock2's timesheet format to Entelect's one for importing.",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha"
+  },
+  "keywords": [
+    "timesheets",
+    "git",
+    "klok",
+    "entelect",
+    "excel",
+    "xlsx",
+    "xls"
+  ],
+  "author": "Ryan Kotzen",
+  "license": "MIT",
+  "dependencies": {
+    "lodash": "4.16.4",
+    "moment": "2.15.1",
+    "xlsx": "0.8.0"
+  },
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/eXigentCoder/klok-2-entelect-timesheets.git"
+  },
+  "bugs": {
+    "url": "https://github.com/eXigentCoder/klok-2-entelect-timesheets/issues"
+  },
+  "homepage": "https://github.com/eXigentCoder/klok-2-entelect-timesheets#readme"
+}
