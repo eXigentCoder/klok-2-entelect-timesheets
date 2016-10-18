@@ -6,7 +6,10 @@ var util = require('util');
 var nconf = require('nconf');
 var roundOffTimeString = require("./round-off-time-string");
 module.exports = function getTimeSheetEntries() {
+    console.log("Loading input file ...");
     var workbook = excel.readFile(nconf.get('inputFile'));
+    console.log("\tDone.");
+    console.log("Generating time sheet entries ...");
     var sheetNames = Object.keys(workbook.Sheets);
     var firstSheet = workbook.Sheets[sheetNames[0]];
     var cellIds = Object.keys(firstSheet);
@@ -79,6 +82,7 @@ module.exports = function getTimeSheetEntries() {
             addCellAsTimesheetEntry(cell);
         }
     });
+    console.log("\tDone.");
     return timeSheetEntries;
 
     function processHeaderRow(row) {

@@ -3,6 +3,7 @@ var excel = require('xlsx');
 var moment = require('moment');
 var util = require('util');
 var nconf = require('nconf');
+var path = require('path');
 
 var cellMappings = {
     Date: {col: 'A', type: 'd'},
@@ -16,7 +17,10 @@ var cellMappings = {
     Sentiment: {col: 'I', type: 's'}
 };
 module.exports = function writeTimeSheetEntriesToFile(entries) {
+    console.log("Generating output excel file ...");
+    console.log("\tLoading template file ...");
     var workbook = excel.readFile(nconf.get('templateFile'));
+    console.log("\t\tDone.");
     var sheetNames = Object.keys(workbook.Sheets);
     var firstSheet = workbook.Sheets[sheetNames[0]];
     var row = 1;
@@ -34,5 +38,10 @@ module.exports = function writeTimeSheetEntriesToFile(entries) {
     });
     firstSheet['!ref'] = 'A1:I' + row;
     var fileDate = moment().format(nconf.get('outputFileDateFormat'));
-    excel.writeFile(workbook, util.format('%s%s.xlsx', nconf.get('outputFilePrefix'), fileDate));
+    console.log("\tDone.");
+    console.log("Writing output excel file to disk ...");
+    var filePath = util.format('%s%s.xlsx', nconf.get('outputFilePrefix'), fileDate);
+    excel.writeFile(workbook, filePath);
+    console.log("\tDone.");
+    console.log("File location \t" + path.join(__dirname, '../', filePath));
 };
