@@ -7,11 +7,11 @@
 Enter Klok 2 Entelect Time sheets (K2ET)!
 
 # Table of Contents
-- [Features](#Features)
-- [Coming soon](#ComingSoon)
-- [Setup](#Setup)
-- [Exporting and Importing](#ExportingAndImporting)
-- [Potential Ideas/Enhancements](#PotentialIdeas/Enhancements)
+- [Features](#features)
+- [Coming soon](#coming-soon)
+- [Setup](#setup)
+- [Exporting and Importing](#exporting-and-importing)
+- [Potential Ideas/Enhancements](#potential-ideasenhancements)
 
 # Features
 1. Simply drag the project-category you are working on to the working area, or double click it, a timer starts.
