@@ -1,4 +1,8 @@
 {
     "inputFile": "./resources/input.xlsx",
-    "defaultComment": "Software Development"
+    "defaultComment": "Software Development",
+    "inputDateFormat": "M/D/YY",
+    "templateFile": "./resources/template.xlsx",
+    "outputFileDateFormat": "YYYY-MM-DD[T]HH.mm",
+    "outputFilePrefix": "./output/TimeSheets-"
 }

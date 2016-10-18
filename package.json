@@ -4,7 +4,8 @@
   "description": "Transforms Klock2's timesheet format to Entelect's one for importing.",
   "main": "index.js",
   "scripts": {
-    "test": "mocha"
+    "lint": "eslint \"modules/**/*.js\" \"src/**/*.js\" \"test/**/*.js\" index.js --fix",
+    "test": "node_modules/.bin/_mocha test/**/*.js"
   },
   "keywords": [
     "timesheets",

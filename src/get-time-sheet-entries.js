@@ -4,6 +4,7 @@ var excel = require('xlsx');
 var moment = require('moment');
 var util = require('util');
 var nconf = require('nconf');
+var roundOffTimeString = require("./round-off-time-string");
 module.exports = function getTimeSheetEntries() {
     var workbook = excel.readFile(nconf.get('inputFile'));
     var sheetNames = Object.keys(workbook.Sheets);
@@ -46,7 +47,7 @@ module.exports = function getTimeSheetEntries() {
     commentRows.forEach(function (row) {
         if (typeof row.value === 'number') {
             processingComment = {
-                date: moment(row.text, 'M/D/YY').format('YYYY-MM-DD')
+                date: moment(row.text, nconf.get('inputDateFormat')).format('YYYY-MM-DD')
             };
         } else if (!processingComment.project) {
             processingComment.project = row.value.split(' (')[0];
@@ -57,7 +58,7 @@ module.exports = function getTimeSheetEntries() {
     });
     let headers = {};
     let projectCategories = {};
-    let timesheetEntries = [];
+    let timeSheetEntries = [];
     var headersToIgnore = ['Project Code', 'Billable', 'Total Hours', 'Billable Amount'];
     entryRows.forEach(function (row) {
         let isHeaderRow = row[0].row === '1';
@@ -78,7 +79,7 @@ module.exports = function getTimeSheetEntries() {
             addCellAsTimesheetEntry(cell);
         }
     });
-    return timesheetEntries;
+    return timeSheetEntries;
 
     function processHeaderRow(row) {
         for (var i = 0; i <= minEntryColumnCount; i++) {
@@ -96,9 +97,13 @@ module.exports = function getTimeSheetEntries() {
         }
         var projectParts = cell.project.split(' > ');
         if (projectParts.length > 2) {
-            throw new Error(util.format('Project name "%s" contained %s parts after splitting by ">", expected 2.', cell.project, projectParts.length))
+            throw new Error(util.format('Project name "%s" contained %s parts after splitting by ">", expected 2.', cell.project, projectParts.length));
         }
-        var rounded = getRounded(cell.text);
+        var rounded = roundOffTimeString(cell.text);
+        if (!rounded) {
+            console.warn(util.format("Cell with null time %j", cell));
+            return;
+        }
         var date = cell.header.split(' ')[1];
         var comment = comments.filter(function (commentObject) {
             if (commentObject.date !== date) {
@@ -120,22 +125,6 @@ module.exports = function getTimeSheetEntries() {
         if (comment[0]) {
             entry.Description = comment[0].comment;
         }
-        timesheetEntries.push(entry);
+        timeSheetEntries.push(entry);
     }
 };
-
-function getRounded(hhmmString) {
-    let timeParts = hhmmString.text.split(':');
-    if (timeParts.length !== 2) {
-        throw new Error("hhmmString must be in the format x:xx where the x's are numbers");
-    }
-    let hours = Number(timeParts[0]);
-    let minutes = Number(timeParts[0]);
-    minutes = ((minutes + 7.5) / 15 | 0) * 15 % 60;
-    hours = ((((minutes / 105) + 0.5) | 0) + hours) % 24;
-    return {
-        hours: hours,
-        minutes: minutes
-    };
-}
-module.exports.getRounded = getRounded;
