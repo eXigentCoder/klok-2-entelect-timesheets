@@ -11,12 +11,14 @@ module.exports = function roundOffTimeString(hhmmString) {
         throw new Error("hhmmString must be in the format x:xx where the x's are numbers");
     }
     let hours = Number(timeParts[0]);
-    let minutes = Number(timeParts[1]);
+    let rawMinutes = Number(timeParts[1]);
+    let minutes = rawMinutes;
     if (hours === 0 && minutes === 0) {
         return null;
     }
-    minutes = ((minutes + 7.5) / 15 | 0) * 15 % 60;
-    hours = ((((Number(timeParts[1]) / 105) + 0.5) | 0) + hours) % 24;
+    minutes = ((rawMinutes + 7.5) / 15 | 0) * 15 % 60;
+    hours = (rawMinutes / 105 + 0.5 | 0) + hours;
+    hours = hours % 24;
     if (hours === 0 && minutes === 0) {
         minutes = 15;
     }
