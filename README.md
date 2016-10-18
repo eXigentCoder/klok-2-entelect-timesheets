@@ -20,12 +20,12 @@ Enter Klok 2 Entelect Time sheets (K2ET)!
 1. Once a day/week/month export your time sheet data from Klok and into Entelect's time sheet system.
 1. Capture comments at any time to the block you are working on.
 
+![](http://getklok.com/images/klok2/big/weekViewEdit.gif)
+
 # Coming Soon
 1. Support for sentiment field by parsing the comment for any of the 3 smilies/emojis - :) :| :(
 1. Support the ticket field by parsing the comment for a # symbol?
 1. Klok marks a whole project as billable or non-billable, so would need to use the comment field. Maybe @billable?
-
-![](http://getklok.com/images/klok2/big/weekViewEdit.gif)
 
 # Setup
 
