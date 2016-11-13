@@ -64,6 +64,7 @@ module.exports = function getTimeSheetEntries() {
     });
     let headers = {};
     let projectCategories = {};
+    let billableProjects = {};
     let timeSheetEntries = [];
     var headersToIgnore = ['Project Code', 'Billable', 'Total Hours', 'Billable Amount'];
     entryRows.forEach(function (row) {
@@ -77,11 +78,16 @@ module.exports = function getTimeSheetEntries() {
                 projectCategories[cell.row] = cell.text;
                 continue;
             }
+            if (cell.col === "C") {
+                billableProjects[cell.row] = cell.text;
+                continue;
+            }
             cell.header = headers[cell.col];
             if (headersToIgnore.indexOf(cell.header) >= 0) {
                 continue;
             }
             cell.project = projectCategories[cell.row];
+            cell.billable = billableProjects[cell.row];
             addCellAsTimesheetEntry(cell);
         }
     });
@@ -127,7 +133,7 @@ module.exports = function getTimeSheetEntries() {
             Category: projectParts[1],
             Hours: rounded.hours,
             Minutes: rounded.minutes,
-            Billable: 'No', //Klok marks certain projects as billable, rather than work blocks, so maybe @billable from comment?
+            Billable: cell.billable || 'No', //Klok marks certain projects as billable, rather than work blocks, so maybe @billable from comment?
             TicketNumber: '', // maybe do something with the comment using a # maybe
             Sentiment: 'Neutral' //perhaps parse the comment for a smiley?  :( :| :)
         };

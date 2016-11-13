@@ -63,5 +63,7 @@ For tips and tricks to using Klok, check out the [features page](http://www.getk
 1. Host this as a service
 1. Create and distribute an electron app.
 1. Find a way to sync the projects & categories across from Entelect to Klok, maybe using [Klokwork Team Console](http://getklok.com/KlokworkTeamConsole.html)
-1. If two comments for the same project-category for the same day, will it only take one? concat!
 1. Ignore certain projects(Config list?) or entries (Comment?)
+1. Ability to mark specific time entries as billable/nonbillable based on comment.
+1. Ability to specify ticket number in comment.
+1. Ability to specify Sentiment in comment.
