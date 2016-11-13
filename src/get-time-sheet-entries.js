@@ -52,11 +52,14 @@ module.exports = function getTimeSheetEntries() {
             processingComment = {
                 date: moment(row.text, nconf.get('inputDateFormat')).format('YYYY-MM-DD')
             };
-        } else if (!processingComment.project) {
+        } else if (row.value.indexOf(' > ') >= 0 && row.value.indexOf(' (at ') >= 0 && row.value.indexOf('; duration: ') >= 0) {
             processingComment.project = row.value.split(' (')[0];
         } else {
             processingComment.comment = row.value;
             comments.push(processingComment);
+            processingComment = {
+                date: processingComment.date
+            }
         }
     });
     let headers = {};
@@ -109,11 +112,14 @@ module.exports = function getTimeSheetEntries() {
             return;
         }
         var date = cell.header.split(' ')[1];
-        var comment = comments.filter(function (commentObject) {
+        var commentsForThisEntry = comments.filter(function (commentObject) {
             if (commentObject.date !== date) {
                 return false;
             }
             return commentObject.project === cell.project;
+        });
+        commentsForThisEntry = commentsForThisEntry.map(function (comment) {
+            return comment.comment;
         });
         var entry = {
             Date: date,
@@ -122,12 +128,17 @@ module.exports = function getTimeSheetEntries() {
             Hours: rounded.hours,
             Minutes: rounded.minutes,
             Billable: 'No', //Klok marks certain projects as billable, rather than work blocks, so maybe @billable from comment?
-            Description: defaultComment,
             TicketNumber: '', // maybe do something with the comment using a # maybe
             Sentiment: 'Neutral' //perhaps parse the comment for a smiley?  :( :| :)
         };
-        if (comment[0]) {
-            entry.Description = comment[0].comment;
+        if (commentsForThisEntry.length > 0) {
+            if (commentsForThisEntry.length > 1) {
+                entry.Description = commentsForThisEntry.join('. ').replace('.. ', '. ');
+            } else {
+                entry.Description = commentsForThisEntry[0];
+            }
+        } else {
+            entry.Description = defaultComment;
         }
         timeSheetEntries.push(entry);
     }
