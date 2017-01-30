@@ -33,7 +33,7 @@ module.exports = function getTimeSheetEntries() {
         };
     });
     var rows = _.groupBy(data, 'row');
-    var minEntryColumnCount = rows[2].length;
+    var minEntryColumnCount = rows[1].length - 2;
     var entryRows = [];
     var commentRows = [];
     Object.keys(rows).forEach(function (id) {
@@ -56,6 +56,9 @@ module.exports = function getTimeSheetEntries() {
             processingComment.project = row.value.split(' (')[0];
         } else {
             processingComment.comment = row.value;
+            if (!processingComment.project) {
+                throw new Error(util.format("Comment was not linked to a project, this normally happens if you didn't have the entry as a subproject of a project. Comment: %j", processingComment));
+            }
             comments.push(processingComment);
             processingComment = {
                 date: processingComment.date
